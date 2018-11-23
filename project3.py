@@ -21,6 +21,7 @@ def tokenize(path):
 
 def indexing(path, word):
     tokens = tokenize(path)
+    path = path.split('/')[-2] + "/" + path.split('/')[-1]
     for token in tokens:
         if token not in word:
             word[token] = ({path:1}, [1])
@@ -43,7 +44,8 @@ def dfitf(word, n=37497):
 def output_data(word):
     file = open('/Users/Archer/Desktop/words.txt', "w")
     for w in word:
-        # token – docId1, tf-idf1 ; docId2, tf-idf2
+        # token - docId1, tf-idf1 ; docId2, tf-idf2
+        pass
         
     file.close()
 
