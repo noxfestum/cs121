@@ -24,11 +24,13 @@ def find_url(doc):
     return url_dict[doc]
 
 def tokenize(path):
+    tokens = []
     soup = BeautifulSoup(open(path), "lxml")
-    s = soup.body.text.encode('utf-8').lower()
-    sw = re.sub(r'[^a-z^0-9]', ' ', s)
-    #sw = re.sub('['+string.punctuation+']',' ', s)
-    tokens = nltk.word_tokenize(sw)
+    if soup.body != None:
+        s = soup.body.text.encode('utf-8').lower()
+        sw = re.sub(r'[^a-z^0-9]', ' ', s)
+        #sw = re.sub('['+string.punctuation+']',' ', s)
+        tokens = nltk.word_tokenize(sw)
     return tokens
 
 def indexing(path, word):
@@ -46,9 +48,11 @@ def indexing(path, word):
     return word
 
 def index_all(url_dict, word):
-    pass
-    #for doc in url_dict.keys():
-    #    indexing(doc, url_dict[doc], word)
+    '''indexes all documents'''
+    base_path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/'
+    for doc in url_dict:
+        doc_path = base_path + doc
+        indexing(doc_path, word)
 
 def tfidf(word, n=37497):
     '''calculate tf- idf for all index word'''
@@ -83,6 +87,7 @@ def output_data(word):
 
 
 url_dict = load_url_dict()
+index_all(url_dict,word)
 tfidf(word, 37497)
 output_data(word)
 
@@ -91,7 +96,6 @@ path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/3/90'
 indexing(path,word)
 indexing('/Users/Archer/Desktop/WEBPAGES_RAW/3/77', word)
 indexing('/Users/Archer/Desktop/WEBPAGES_RAW/3/79', word)
-
 
 # for w in word:
 #     print w, word[w]
