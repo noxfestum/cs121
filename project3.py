@@ -5,11 +5,13 @@ import re, os
 import math
 import sys
 import string
+import json
 '''
-word = {word:({id: tf-idf }, df:# }
+word = {word:({id: tf-idf }, df:# )}
 '''
 
-word = {}#'a0':({}, 0, 0),}
+word = {} #'a0':({}, 0, 0),)
+url_dict = {} #docID: url
 
 def tokenize(path):
     soup = BeautifulSoup(open(path), "lxml")
@@ -33,13 +35,22 @@ def indexing(path, word):
                 word[token][0][path] += 1
     return word
 
-
 def dfitf(word, n=37497):
     for w in word.keys():
         idf = int(math.log10(n / word[w][1][0]))
         for doc in word[w][0].keys():
             tf = int(1 + math.log10(word[w][0][doc]))
             word[w][0][doc] = tf+idf
+
+def load_url_dict():
+    '''loads bookkeeping.json and returns resulted json dict'''
+    file_path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/bookkeeping.json'
+    json_text = open(file_path).read()
+    return json.loads(json_text)
+
+def find_url(doc):
+    '''returns url according to the docID'''
+    return url_dict[doc]
 
 def output_data(word):
     file = open('/Users/Archer/Desktop/words.txt', "w")
@@ -50,11 +61,14 @@ def output_data(word):
     file.close()
 
 path = '/Users/Archer/Desktop/WEBPAGES_RAW/3/90'
+path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/3/90'
+
+url_dict = load_url_dict()
 
 indexing(path,word)
 indexing('/Users/Archer/Desktop/WEBPAGES_RAW/3/77', word)
 indexing('/Users/Archer/Desktop/WEBPAGES_RAW/3/79', word)
 
 dfitf(word, 37497)
-print word
-
+# for w in word:
+#     print w, word[w]
