@@ -10,6 +10,8 @@ import json
 word = {word:({id: tf-idf }, df:# )}
 '''
 
+DEBUG = False
+
 word = {} # word:({id: tf-idf }, df:#
 url_dict = {} # docID: url
 
@@ -46,7 +48,8 @@ def indexing(path, word):
                 word[token][1][0] += 1
             else:
                 word[token][0][path] += 1
-    return word
+        if DEBUG == True:
+            print token, word[token], '\n'
 
 def index_all(url_dict, word):
     '''indexes all documents'''
