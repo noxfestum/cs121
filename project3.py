@@ -16,7 +16,6 @@ url_dict = {} # docID: url
 def load_url_dict():
     '''loads bookkeeping.json and returns resulted json dict'''
     file_path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/bookkeeping.json'
-    # file_path = '/Users/Archer/Desktop/WEBPAGES_RAW/bookkeeping.json'
     json_text = open(file_path).read()
     return json.loads(json_text)
 
@@ -51,7 +50,6 @@ def indexing(path, word):
 def index_all(url_dict, word):
     '''indexes all documents'''
     base_path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/'
-    # base_path = '/Users/Archer/Desktop/WEBPAGES_RAW/'
     for doc in url_dict:
         doc_path = base_path + doc
         indexing(doc_path, word)
@@ -64,6 +62,7 @@ def tfidf(word, n=37497):
             tf = int(1 + math.log10(word[w][0][doc]))
             word[w][0][doc] = tf+idf
 
+
 def search(w): #w= sys.argv[1]
     '''print url contains given word w'''
     docs = word[w][0].keys()
@@ -75,8 +74,7 @@ def search(w): #w= sys.argv[1]
 
 def output_data(word):
     '''write index into txt file on desktop'''
-    file = open('/Users/Mescetina/Downloads/words.txt', 'w')
-    # file = open('/Users/Archer/Desktop/words.txt', "w")
+    file = open('/Users/Archer/Desktop/words.txt', "w")
     for w in word:
         docs =[]
         for doc in word[w][0]:
@@ -85,15 +83,19 @@ def output_data(word):
         file.write(w + " - " + wordlog +"\n")
     file.close()
 
-def read_input():
-    while True:
-        print "Search: (press ctrl-D to exit)"
-        user_input = input()
-        search(user_input)
 
-if __name__ == '__main__':
-    url_dict = load_url_dict()
-    index_all(url_dict,word)
-    tfidf(word, 37497)
-    output_data(word)
-    read_input()
+
+
+url_dict = load_url_dict()
+index_all(url_dict,word)
+tfidf(word, 37497)
+output_data(word)
+
+path = '/Users/Archer/Desktop/WEBPAGES_RAW/3/90'
+path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/3/90'
+indexing(path,word)
+indexing('/Users/Archer/Desktop/WEBPAGES_RAW/3/77', word)
+indexing('/Users/Archer/Desktop/WEBPAGES_RAW/3/79', word)
+
+# for w in word:
+#     print w, word[w]
