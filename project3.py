@@ -7,12 +7,12 @@ import sys
 import string
 import json
 '''
-word = {word:({id: tf-idf }, df:# )}
+word = {word:({id: tf-idf }, [df:# ])}
 '''
 
-DEBUG = False
+DEBUG = True
 
-word = {} # word:({id: tf-idf }, df:#
+word = {} # word:({id: tf-idf }, [df:#])
 url_dict = {} # docID: url
 
 def load_url_dict():
@@ -21,6 +21,24 @@ def load_url_dict():
     # file_path = '/Users/Archer/Desktop/WEBPAGES_RAW/bookkeeping.json'
     json_text = open(file_path).read()
     return json.loads(json_text)
+
+def load_index():
+    '''loads saved index to word if file exists, otherwise indexes all documents'''
+    try:
+        file = open('/Users/Mescetina/Downloads/words.txt', 'r')
+        for line in file:
+            item = line.split(" - ")
+            word[item[0]] = ({}, [1])
+            docs = item[1].split("; ")
+            for doc in docs:
+                doc_item = doc.split(',')
+                docID = doc_item[0][4:]
+                word[item[0]][0][docID] = int(doc_item[1])
+        file.close()
+    # equivalent to FileNotFoundError
+    except IOError:
+        index_all(url_dict,word)
+        tfidf(word, 37497)
 
 def find_url(doc):
     '''returns url according to the docID'''
@@ -48,8 +66,8 @@ def indexing(path, word):
                 word[token][1][0] += 1
             else:
                 word[token][0][path] += 1
-        if DEBUG == True:
-            print token, word[token], '\n'
+    if DEBUG == True:
+        print path
 
 def index_all(url_dict, word):
     '''indexes all documents'''
@@ -96,7 +114,6 @@ def read_input():
 
 if __name__ == '__main__':
     url_dict = load_url_dict()
-    index_all(url_dict,word)
-    tfidf(word, 37497)
+    load_index()
     output_data(word)
     read_input()
