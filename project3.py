@@ -10,8 +10,18 @@ import json
 word = {word:({id: tf-idf }, df:# )}
 '''
 
-word = {} #'a0':({}, 0, 0),)
-url_dict = {} #docID: url
+word = {} # word:({id: tf-idf }, df:#
+url_dict = {} # docID: url
+
+def load_url_dict():
+    '''loads bookkeeping.json and returns resulted json dict'''
+    file_path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/bookkeeping.json'
+    json_text = open(file_path).read()
+    return json.loads(json_text)
+
+def find_url(doc):
+    '''returns url according to the docID'''
+    return url_dict[doc]
 
 def tokenize(path):
     soup = BeautifulSoup(open(path), "lxml")
@@ -35,24 +45,31 @@ def indexing(path, word):
                 word[token][0][path] += 1
     return word
 
-def dfitf(word, n=37497):
+def index_all(url_dict, word):
+    pass
+    #for doc in url_dict.keys():
+    #    indexing(doc, url_dict[doc], word)
+
+def tfidf(word, n=37497):
+    '''calculate tf- idf for all index word'''
     for w in word.keys():
         idf = int(math.log10(n / word[w][1][0]))
         for doc in word[w][0].keys():
             tf = int(1 + math.log10(word[w][0][doc]))
             word[w][0][doc] = tf+idf
 
-def load_url_dict():
-    '''loads bookkeeping.json and returns resulted json dict'''
-    file_path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/bookkeeping.json'
-    json_text = open(file_path).read()
-    return json.loads(json_text)
 
-def find_url(doc):
-    '''returns url according to the docID'''
-    return url_dict[doc]
+def search(w): #w= sys.argv[1]
+    '''print url contains given word w'''
+    docs = word[w][0].keys()
+    #result = []
+    for doc in docs:
+        print(find_url(doc))
+        #result.append(find_url(doc))
+    #return result
 
 def output_data(word):
+    '''write index into txt file on desktop'''
     file = open('/Users/Archer/Desktop/words.txt', "w")
     for w in word:
         docs =[]
@@ -62,15 +79,19 @@ def output_data(word):
         file.write(w + " - " + wordlog +"\n")
     file.close()
 
-path = '/Users/Archer/Desktop/WEBPAGES_RAW/3/90'
-path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/3/90'
+
+
 
 url_dict = load_url_dict()
+tfidf(word, 37497)
+output_data(word)
 
+path = '/Users/Archer/Desktop/WEBPAGES_RAW/3/90'
+path = '/Users/Mescetina/Downloads/WEBPAGES_RAW/3/90'
 indexing(path,word)
 indexing('/Users/Archer/Desktop/WEBPAGES_RAW/3/77', word)
 indexing('/Users/Archer/Desktop/WEBPAGES_RAW/3/79', word)
 
-dfitf(word, 37497)
+
 # for w in word:
 #     print w, word[w]
