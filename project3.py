@@ -100,11 +100,13 @@ def search(w):
     '''Sorted docs by score in descending order'''
     ranked_docs = OrderedDict(sorted(ranked_docs.items(), key=itemgetter(1), reverse = True))
 
+    result_url = []
     for doc in ranked_docs:
-        print find_url(doc)
+        result_url.append(find_url(doc))
         ''' Only print the docs with score higher than 3 to check the top results '''
         #if ranked_docs[doc] <= 3:
         #    break
+    return result_url
 
 
 def output_data(word):
