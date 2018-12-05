@@ -3,14 +3,15 @@ from bs4 import BeautifulSoup
 import nltk
 import re, os
 import math
-import sys
 import string
 import json
+from collections import OrderedDict
+from operator import itemgetter
 '''
 word = {word:({id: tf-idf }, [df:# ])}
 '''
 
-DEBUG = True
+DEBUG = False
 
 word = {} # word:({id: tf-idf }, [df:#])
 url_dict = {} # docID: url
@@ -85,14 +86,26 @@ def tfidf(word, n=37497):
             tf = int(1 + math.log10(word[w][0][doc]))
             word[w][0][doc] = tf+idf
 
-def search(w): #w= sys.argv[1]
+def search(w):
     '''print url contains given word w'''
-    docs = word[w][0].keys()
-    #result = []
-    for doc in docs:
-        print(find_url(doc))
-        #result.append(find_url(doc))
-    #return result
+    query = w.strip().lower().split()
+    ranked_docs = {}
+    for i in query:
+        for doc in word[i][0]:
+            if doc not in ranked_docs:
+                ranked_docs[doc] = word[i][0][doc]
+            else:
+                ranked_docs[doc] += word[i][0][doc]
+
+    '''Sorted docs by score in descending order'''
+    ranked_docs = OrderedDict(sorted(ranked_docs.items(), key=itemgetter(1), reverse = True))
+
+    for doc in ranked_docs:
+        print find_url(doc)
+        ''' Only print the docs with score higher than 3 to check the top results '''
+        #if ranked_docs[doc] <= 3:
+        #    break
+
 
 def output_data(word):
     '''write index into txt file on desktop'''
@@ -108,8 +121,8 @@ def output_data(word):
 
 def read_input():
     while True:
-        print "Search: (press ctrl-D to exit)"
-        user_input = input()
+        user_input = raw_input("Search: (press ctrl-D to exit) ")
+        # python 2 use raw_input() instead of python 3 use input()
         search(user_input)
 
 if __name__ == '__main__':
