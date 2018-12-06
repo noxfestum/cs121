@@ -91,21 +91,19 @@ def search(w):
     query = w.strip().lower().split()
     ranked_docs = {}
     for i in query:
-        for doc in word[i][0]:
-            if doc not in ranked_docs:
-                ranked_docs[doc] = word[i][0][doc]
-            else:
-                ranked_docs[doc] += word[i][0][doc]
+        if i in word:
+            for doc in word[i][0]:
+                if doc not in ranked_docs:
+                    ranked_docs[doc] = word[i][0][doc]
+                else:
+                    ranked_docs[doc] += word[i][0][doc]
 
     '''Sorted docs by score in descending order'''
     ranked_docs = OrderedDict(sorted(ranked_docs.items(), key=itemgetter(1), reverse = True))
 
     result_url = []
-    for doc in ranked_docs:
+    for doc in ranked_docs.keys()[:20]:
         result_url.append(find_url(doc))
-        ''' Only print the docs with score higher than 3 to check the top results '''
-        #if ranked_docs[doc] <= 3:
-        #    break
     return result_url
 
 
@@ -123,9 +121,11 @@ def output_data(word):
 
 def read_input():
     while True:
-        user_input = raw_input("Search: (press ctrl-D to exit) ")
+        user_input = raw_input("Search (press ctrl-D to exit): ")
         # python 2 use raw_input() instead of python 3 use input()
-        search(user_input)
+        for result in search(user_input):
+            print result
+        print
 
 if __name__ == '__main__':
     url_dict = load_url_dict()
