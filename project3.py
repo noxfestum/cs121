@@ -88,7 +88,8 @@ def tfidf(word, n=37497):
 
 def search(w):
     '''print url contains given word w'''
-    query = w.strip().lower().split()
+    sw = re.sub(r'[^a-z^0-9]', ' ', w)
+    query = nltk.word_tokenize(sw)
     ranked_docs = {}
     for i in query:
         if i in word:
