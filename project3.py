@@ -1,6 +1,7 @@
 import lxml
 from bs4 import BeautifulSoup
 import nltk
+from nltk.corpus import stopwords
 import re, os
 import math
 import string
@@ -15,6 +16,8 @@ DEBUG = False
 
 word = {} # word:({id: tf-idf }, [df:#])
 url_dict = {} # docID: url
+stop_words = set(stopwords.words('english'))
+
 
 def load_url_dict():
     '''loads bookkeeping.json and returns resulted json dict'''
@@ -52,7 +55,10 @@ def tokenize(path):
         s = soup.body.text.encode('utf-8').lower()
         sw = re.sub(r'[^a-z^0-9]', ' ', s)
         #sw = re.sub('['+string.punctuation+']',' ', s)
-        tokens = nltk.word_tokenize(sw)
+        tokens = []
+        for t in nltk.word_tokenize(sw):
+            if t not in stop_words:
+                tokens.append(t)
     return tokens
 
 def indexing(path, word):
@@ -84,7 +90,7 @@ def tfidf(word, n=37497):
         idf = int(math.log10(n / word[w][1][0]))
         for doc in word[w][0].keys():
             tf = int(1 + math.log10(word[w][0][doc]))
-            word[w][0][doc] = tf+idf
+            word[w][0][doc] = tf*idf
 
 def search(w):
     '''print url contains given word w'''
